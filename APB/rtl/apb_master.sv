@@ -4,24 +4,24 @@ module apb_master(
     input logic rst_n,
     input logic transfer,
     input logic PREADY,
-    input logic[APB_RDATA_WIDTH-1:0] PRDATA,
+    input word_t PRDATA,
     //input logic PSLVERR,
     // from wrapper
     input logic [APB_ADDRESS-1:0] MADDR,
     input logic MWRITE,
-    input logic [APB_WDATA_WIDTH-1:0] MWDATA,
-    input logic [APB_WDATA_BYTES-1:0] MSTRB,
+    input word_t MWDATA,
+    input logic [APB_DATA_BYTES-1:0] MSTRB,
     //input logic [PROTECTION_BITS-1:0] MPROT,
 
     output logic [APB_SEL_BITS-1:0] PSEL,
     output logic PENABLE,
     output logic [APB_ADDRESS-1:0] PADDR,
     output logic PWRITE,
-    output logic [APB_WDATA_WIDTH-1:0] PWDATA,
-    output logic [APB_WDATA_BYTES-1:0] PSTRB,
+    output word_t PWDATA,
+    output logic [APB_DATA_BYTES-1:0] PSTRB,
     //output logic [PROTECTION_BITS-1:0] PPROT,
     //for wrapper
-    output logic [APB_RDATA_WIDTH-1:0] MRDATA
+    output word_t MRDATA
     //output logic MSLVERR
 );
 
@@ -30,10 +30,10 @@ logic [APB_SEL_BITS-1:0] PSEL_q, PSEL_next;
 logic PENABLE_q, PENABLE_next;
 logic [APB_ADDRESS-1:0] PADDR_q, PADDR_next;
 logic PWRITE_q, PWRITE_next;
-logic [APB_WDATA_WIDTH-1:0] PWDATA_q, PWDATA_next;
-logic [APB_WDATA_BYTES-1:0] PSTRB_q, PSTRB_next;
+word_t PWDATA_q, PWDATA_next;
+logic [APB_DATA_BYTES-1:0] PSTRB_q, PSTRB_next;
 //logic [PROTECTION_BITS-1:0] PPROT_q, PPROT_next;
-logic [APB_RDATA_WIDTH-1:0] MRDATA_q, MRDATA_next;
+word_t MRDATA_q, MRDATA_next;
 //logic MSLVERR_q, MSLVERR_next;
 
 // CURRENT STATE LOGIC
