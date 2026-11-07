@@ -95,6 +95,8 @@ always_comb begin
                 PWDATA_next = MWDATA;
                 PADDR_next = MADDR;
                 PSTRB_next = MSTRB;
+                //from slave
+                MRDATA_next = PRDATA;
             end
             else begin
                 state_next = IDLE;
@@ -102,7 +104,8 @@ always_comb begin
                 PWRITE_next = 1'b0;
                 PADDR_next = '0;
                 PWDATA_next = '0;
-                PSTRB_next = '0;            
+                PSTRB_next = '0; 
+                MRDATA_next = '0; 
             end
         end
         SETUP: begin
@@ -113,7 +116,7 @@ always_comb begin
             PADDR_next = PADDR_q;
             PWDATA_next = PWDATA_q;
             PSTRB_next = PSTRB_q;
-            MRDATA_next = '0;
+            MRDATA_next = MRDATA_q;
 
         end
         ACCESS: begin
@@ -126,7 +129,7 @@ always_comb begin
                 PWDATA_next = PWDATA_q;
                 PADDR_next = PADDR_q;
                 PSTRB_next = PSTRB_q;
-                MRDATA_next = '0;
+                MRDATA_next = MRDATA_q;
             end
             else begin
                 if(transfer)begin
