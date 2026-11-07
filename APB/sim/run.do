@@ -1,6 +1,9 @@
 vlib work
-vlog -f compile.f  +cover -covercells
-vsim -voptargs=+acc work.apb_master_tb -cover 
-#add wave -position insertpoint /uart_tb/uart_inst/*
+vlog -f compile.f +cover -covercells
+
+# FIX: Added +acc=a to visibility options and enabled -assertdebug for assertions
+vsim -voptargs=+acc -assertdebug work.apb_master_tb work.apb_bind_wrapper -cover
+
+do wave.do
 run -all
 #quit -sim
