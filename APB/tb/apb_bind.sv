@@ -1,1 +1,0 @@
-bind apb_master apb_assertions assertions (.*);

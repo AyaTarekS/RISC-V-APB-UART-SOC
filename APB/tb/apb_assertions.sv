@@ -4,7 +4,7 @@ module apb_assertions(
     input logic rst_n,
     input logic transfer,
     input logic PREADY,
-    input logic PRDATA,
+    input word_t PRDATA,
     input logic [APB_ADDRESS-1:0] MADDR,
     input logic MWRITE,
     input word_t MWDATA,
@@ -17,8 +17,11 @@ module apb_assertions(
     input logic [APB_DATA_BYTES-1:0] PSTRB,
     input word_t MRDATA
 );
-    sequence start_transaction;
-        transfer ##1 $onehot(PSEL);
+    sequence start_write_transaction;
+        transfer and !PSEL ##1 ($onehot(PSEL) and PWRITE);
+    endsequence
+    sequence start_read_transaction;
+        transfer and !PSEL ##1 ($onehot(PSEL) and !PWRITE);
     endsequence
     sequence succesful_transaction;
         PENABLE and PREADY and !transfer;
@@ -28,11 +31,11 @@ module apb_assertions(
     endsequence
     sequence no_transaction;
         (!PENABLE and !PSEL);
-    endasequence
+    endsequence
 
 
     sequence stable_write_transaction;
-        $stable(PSEL) and PWRITE and $stable(PADDR) and $stable(PSTRB) and PENABLE;
+        $stable(PSEL) and PWRITE and $stable(PADDR) and $stable(PSTRB) and $rose(PENABLE);
     endsequence
 
     sequence extended_write_access_transaction;
@@ -41,7 +44,7 @@ module apb_assertions(
 
 
     sequence stable_read_transaction;
-        $stable(PSEL) and !PWRITE and (PSTRB == '0) and $stable(PADDR) and PENABLE;
+        $stable(PSEL) and !PWRITE and (PSTRB == '0) and $stable(PADDR) and $rose(PENABLE);
     endsequence
 
     sequence extended_read_access_transaction;
@@ -51,7 +54,7 @@ module apb_assertions(
 
     //general assertions
     property p_apb_access_after_setup;
-        @(posedge pclk) disable iff(!rst_n) $onehot(PSEL) |=> (PENABLE and $stable(PSEL));
+        @(posedge pclk) disable iff(!rst_n) $onehot(PSEL) and !PENABLE |=> (($rose(PENABLE) and $stable(PSEL)));
     endproperty
 
     property p_apb_setup_after_transfer;
@@ -72,7 +75,7 @@ module apb_assertions(
 
     //write assertions
     property p_apb_write_transaction;
-        @(posedge pclk) disable iff(!rst_n) start_transaction |=> stable_write_transaction ;
+        @(posedge pclk) disable iff(!rst_n) start_write_transaction |=> stable_write_transaction ;
     endproperty
 
     property p_apb_extended_write;
@@ -82,7 +85,7 @@ module apb_assertions(
 
     //read assertions
     property p_apb_read_transaction;
-        @(posedge pclk) disable iff(!rst_n) start_transaction |=> stable_read_transaction and PENABLE;
+        @(posedge pclk) disable iff(!rst_n) start_read_transaction and !PWRITE |=> stable_read_transaction;
     endproperty
 
     property p_apb_extended_read;
