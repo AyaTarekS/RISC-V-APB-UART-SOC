@@ -100,7 +100,7 @@ always_comb begin
             end
             else begin
                 state_next = IDLE;
-                PSEL_next[UART_IDX] = 1'b0;
+                PSEL_next = '0;
                 PWRITE_next = 1'b0;
                 PADDR_next = '0;
                 PWDATA_next = '0;
@@ -134,7 +134,11 @@ always_comb begin
             else begin
                 if(transfer)begin
                     state_next = SETUP;
-                    PSEL_next[UART_IDX] = 1'b1;
+                    priority case(MADDR[15:12])
+                    4'h0: PSEL_next[UART_IDX]  = 1'b1;
+                    4'h1: PSEL_next[WATCHDOG_IDX]  = 1'b1;
+                    4'h2: PSEL_next[TIMER_IDX] = 1'b1;
+                    endcase
                     PENABLE_next = 1'b0;
                     PWRITE_next = MWRITE; 
                     PWDATA_next = MWDATA;
@@ -147,7 +151,7 @@ always_comb begin
                 end
                 else begin
                     state_next = IDLE;
-                    PSEL_next[UART_IDX] = 1'b0;
+                    PSEL_next = '0;
                     PENABLE_next = 1'b0;
                     PWRITE_next = 1'b0;
                     PADDR_next = '0;
