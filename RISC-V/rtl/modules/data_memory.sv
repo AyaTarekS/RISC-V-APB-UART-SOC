@@ -1,5 +1,5 @@
 import risc_pkg::*;
-module data_mem(
+module data_memory(
     input logic CLK,
     input logic WE,
     input word_t A,
